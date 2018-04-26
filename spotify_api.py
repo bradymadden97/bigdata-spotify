@@ -1,5 +1,4 @@
 import requests
-import urllib
 import json
 import spotify_config
 
