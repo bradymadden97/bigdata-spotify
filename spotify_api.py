@@ -43,7 +43,7 @@ def get_top_chart_json(filename):
                 tempdict = dict()
                 for key, val in row.items():
                     tempdict[key] = val
-                rlist.append(tempdict)
+                rlist.append((tempdict['URL']))
         except UnicodeDecodeError:
             pass
     return rlist
