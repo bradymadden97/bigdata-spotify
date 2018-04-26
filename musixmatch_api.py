@@ -32,4 +32,4 @@ def print_json(jsondata):
 
 if __name__ == '__main__':
 	print('\n\n\n')
-	print_json(api_generic('chart.tracks.get', page=1, f_has_lyrics=1))
+	print_json(api_generic('track.lyrics.get', track_isrc='TCACG1582632'))

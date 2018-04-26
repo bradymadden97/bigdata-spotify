@@ -14,6 +14,12 @@ AUTH_TOKEN = spotify_config.authToken
 # Function definitions
 ###################################################################################################
 
+def api_get_external_id(url):
+	try:
+		return api_generic('tracks/' + str(url.split('/')[-1]))['external_ids']['isrc']
+	except:
+		return None
+
 
 def api_search(q, qtype, market=None, limit=None, offset=None):
     parameters = {'q': q, 'type': qtype, 'market': market, 'limit': limit, 'offset': offset}
