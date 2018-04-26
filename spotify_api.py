@@ -1,5 +1,6 @@
 import requests
 import json
+import csv
 import spotify_config
 
 ###################################################################################################
@@ -33,6 +34,21 @@ def api_generic(endpoint, **kwargs):
     return data.json()
 
 
+def get_top_chart_json(filename):
+    rlist = list()
+    with open(filename, encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        try:
+            for row in reader:
+                tempdict = dict()
+                for key, val in row.items():
+                    tempdict[key] = val
+                rlist.append(tempdict)
+        except UnicodeDecodeError:
+            pass
+    return rlist
+
+
 def print_json(jsondata):
     print(json.dumps(jsondata, indent=2, sort_keys=True))
 
@@ -42,6 +58,4 @@ def print_json(jsondata):
 ###################################################################################################
 
 if __name__ == '__main__':
-    print_json(api_search('Kanye', 'artist'))
-    print('\n\n\n')
-    print_json(api_generic('me'))
+    print_json(get_top_chart_json('data/regional-global-daily-latest.csv'))
