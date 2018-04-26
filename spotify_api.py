@@ -1,14 +1,14 @@
 import requests
 import urllib
 import json
-import config
+import spotify_config
 
 ###################################################################################################
 # Variable declaration
 ###################################################################################################
 
 URL_BASE = "https://api.spotify.com/v1/"
-AUTH_TOKEN = config.authToken
+AUTH_TOKEN = spotify_config.authToken
 
 ###################################################################################################
 # Function definitions
