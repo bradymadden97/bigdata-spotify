@@ -1,0 +1,186 @@
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+	<style>
+		html{
+			background-color: #fafafa;
+			text-align: center;
+		}
+		html,body,button,input{
+			font-family: 'Montserrat', sans-serif;
+		}
+		#genreinput{
+			height: 50px;
+			font-size: 32px;
+			border: 0px;
+			width: 300px;
+			background-color: #fafafa;
+			border-bottom: 1px solid #d3d3d3;
+		}
+		#genreinput:focus{
+			outline: 0;
+			border-bottom: 1px solid #00BFFF;
+		}
+		#generatebtn{
+			margin-left: 20px;
+			font-size: 30px;
+			height: 52px;
+			border: 1px solid #d3d3d3;
+			border-radius: 5px;
+			background-color: #fff;
+			cursor: pointer;
+		}
+		#generatebtn:focus{
+			outline: 0;
+		}
+		#genreinput:focus + #generatebtn{
+			border: 1px solid #00BFFF;
+		}
+		#writingthenext{
+			font-size: 24px;
+		}
+		#dotdot{
+			font-size: 24px;
+		}
+		#scriptlyrics div{
+			max-width: 800px;
+			border-radius: 5px;
+			font-size: 20px;
+			padding: 20px;
+			background-color: #fff;
+			box-shadow: 0px 0px 30px 0px #d3d3d3;
+			margin: auto;
+			margin-top: 20px;
+		}
+		#resultsshow{
+			display: none;
+		}
+		#scriptlyrics{
+			display: none;
+		}
+		#scriptlyrics a{
+			color: #fff;
+			background-color: #00BFFF;
+			box-shadow: 0px 5px 30px 0px #d3d3d3;
+			text-decoration: none;
+			padding: 20px;
+			font-size: 20px;
+			border-radius: 5px;
+			display: block;
+			width: 200px;
+			margin: auto;
+			margin-top: 20px;
+		}
+		#source{
+			position: absolute;
+			bottom: 5px;
+			right: 5px;
+			text-decoration: none;
+		}
+		#initalshow{
+			margin-top: 30px;
+		}
+			
+	</style>
+	<title>Lyrics Generator</title>
+</head>
+<body>
+	<div id="source"><a target="_blank" style="color:black" href="https://github.com/bradymadden97/bigdata-spotify">Source</a></div>
+	
+	<div id="initalshow">
+		<h1>Generate song lyrics from a genre</h1>
+		<br><br>
+		<input id="genreinput" placeholder="Ex: Hip Hop"/>
+		<button id="generatebtn">Generate!</button>
+		<div id="generateerror" style="display:none;margin-top:10px">Genre not found, try 'hip hop'</div>
+		<div id="therewasanerror" style="display:none;margin-top:10px">There was an error. Please try again</div>
+	</div>
+	
+	<div id="resultsshow">
+		<br><br><br>
+		<div id="holdingtext">
+			<span id="writingthenext">Writing the next platinum</span><span id="dotdot"> &nbsp; &nbsp; &nbsp; &nbsp;</span>
+		</div>
+		
+		<div id="scriptlyrics">
+			<div>
+			
+			</div>		
+			<a href='/'>Try again</a>
+		</div>
+	</div>
+	
+	<script>
+		var dotcount = 0;
+		var genrelist = ['hiphop', 'metal', 'country', 'pop'];
+		
+		document.getElementById("generatebtn").addEventListener('click', function(){buildsong(document.getElementById("genreinput").value.replace(/\W/g,''))});
+		document.getElementById("genreinput").addEventListener('keyup', function(event){
+			document.getElementById("generateerror").style.display = "none";
+			document.getElementById("therewasanerror").style.display = "none";
+			document.getElementById("genreinput").style.borderBottom = "1px solid #00BFFF";
+			document.getElementById("generatebtn").style.border = "1px solid #00BFFF";
+			if(event.which == 13 || event.keyCode == 13){
+				document.getElementById("generatebtn").click();
+			}
+		});
+		document.getElementById("genreinput").addEventListener('blur', function(){
+			document.getElementById("genreinput").style.borderBottom = "1px solid #d3d3d3";
+			document.getElementById("generatebtn").style.border = "1px solid #d3d3d3";
+		});
+		
+		function buildsong(genre){
+			if(genrelist.indexOf(genre) == -1){
+				document.getElementById("genreinput").style.borderBottom = "1px solid #ff0000";
+				document.getElementById("generatebtn").style.border = "1px solid #ff0000";
+				document.getElementById("generateerror").style.display = "block";
+				document.getElementById("therewasanerror").style.display = "none";
+				
+			}else{
+				setInterval(function(){
+					dotcount += 1;
+					if (dotcount < 5) {
+						document.getElementById("dotdot").innerHTML = " .".repeat(dotcount) + " &nbsp;".repeat(4-dotcount);
+					}else{
+						dotcount = 0;
+						document.getElementById("dotdot").innerHTML = " &nbsp; &nbsp; &nbsp; &nbsp;";
+					}
+				}, 1000);
+				
+				
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var res = JSON.parse(xhttp.responseText);
+						if(res.err != null){
+							document.getElementById("initalshow").style.display = "block";
+							document.getElementById("resultsshow").style.display = "none";
+							document.getElementById("genreinput").style.borderBottom = "1px solid #ff0000";
+							document.getElementById("generatebtn").style.border = "1px solid #ff0000";
+							document.getElementById("therewasanerror").style.display = "block";
+					   
+					   }else{
+							document.getElementById("scriptlyrics").childNodes[1].innerHTML = res.lyrics;
+							document.getElementById("holdingtext").style.display = "none";
+							document.getElementById("scriptlyrics").style.display = "block";
+					   
+					   }
+					   
+					}
+				};
+				xhttp.open("GET", "/generate?g=" + encodeURI(genre), true);
+				xhttp.send();
+				
+				document.getElementById("initalshow").style.display = "none";
+				document.getElementById("resultsshow").style.display = "block";
+				document.getElementById("scriptlyrics").style.display = "none";
+				
+
+			}
+		}
+		
+		document.getElementById("genreinput").focus();
+	</script>
+
+</body>
+</html>
