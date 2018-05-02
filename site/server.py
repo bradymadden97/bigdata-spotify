@@ -22,3 +22,7 @@ def generate_lyrics():
 	
 	r = {'lyrics': lyrics, 'err': err}
 	return jsonify(r)
+	
+	
+if __name__ == "__main__":
+	app.run()
